@@ -61,7 +61,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>org.cg.lab3.Application</mainClass>
+                            <mainClass>cg.lab3.Application</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
