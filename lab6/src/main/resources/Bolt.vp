@@ -1,0 +1,6 @@
+attribute vec4 vertices;
+
+void main(void)
+{
+  gl_Position = vertices;
+}

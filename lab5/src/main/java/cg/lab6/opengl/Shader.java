@@ -1,4 +1,4 @@
-package cg.lab5.opengl;
+package cg.lab6.opengl;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.GLArrayDataServer;
@@ -45,10 +45,14 @@ public class Shader implements GLEventListener {
         state.attachShaderProgram(gl, shaderProgram, true);
 
         vertices = GLArrayDataServer.createGLSL("vertices", 2, GL.GL_FLOAT, true, 4, GL.GL_STATIC_DRAW);
-        vertices.putf(-1); vertices.putf(1);
-        vertices.putf(1); vertices.putf(1);
-        vertices.putf(-1); vertices.putf(-1);
-        vertices.putf(1); vertices.putf(-1);
+        vertices.putf(-1);
+        vertices.putf(1);
+        vertices.putf(1);
+        vertices.putf(1);
+        vertices.putf(-1);
+        vertices.putf(-1);
+        vertices.putf(1);
+        vertices.putf(-1);
         vertices.seal(gl, true);
         state.ownAttribute(vertices, true);
 
@@ -72,12 +76,11 @@ public class Shader implements GLEventListener {
     @Override
     public void display(GLAutoDrawable glAutoDrawable) {
         final GL2ES2 gl = glAutoDrawable.getGL().getGL2ES2();
-
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
         state.useProgram(gl, true);
 
-        curTime+=0.001f;
+        curTime += 0.001f;
         int time = state.getUniformLocation(gl, "time");
         gl.glUniform1f(time, curTime);
 

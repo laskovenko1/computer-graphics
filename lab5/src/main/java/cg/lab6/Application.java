@@ -1,6 +1,6 @@
-package cg.lab5;
+package cg.lab6;
 
-import cg.lab5.ui.MainWindow;
+import cg.lab6.ui.MainWindow;
 
 public class Application {
 

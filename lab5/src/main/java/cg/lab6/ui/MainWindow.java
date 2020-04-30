@@ -1,4 +1,4 @@
-package cg.lab5.ui;
+package cg.lab6.ui;
 
 import javax.swing.*;
 import java.awt.*;
