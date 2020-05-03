@@ -1,9 +1,9 @@
 package cg.lab2.opengl;
 
+import cg.lab1.models.Color4f;
+import cg.lab1.models.Pair;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
-import com.sun.scenario.effect.Color4f;
-import javafx.util.Pair;
 
 import java.awt.geom.Point2D;
 import java.util.LinkedList;

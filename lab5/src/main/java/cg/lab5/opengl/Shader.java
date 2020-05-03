@@ -1,4 +1,4 @@
-package cg.lab6.opengl;
+package cg.lab5.opengl;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.GLArrayDataServer;

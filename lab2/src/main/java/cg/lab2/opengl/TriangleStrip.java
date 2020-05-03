@@ -1,18 +1,18 @@
 package cg.lab2.opengl;
 
+import cg.lab1.models.Color4f;
+import cg.lab1.models.Pair;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GLAutoDrawable;
-import com.sun.scenario.effect.Color4f;
-import javafx.util.Pair;
 
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.List;
 
+import static cg.lab2.opengl.Primitives.GL_TRIANGLE_STRIP;
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2.GL_ACCUM_BUFFER_BIT;
 import static com.jogamp.opengl.GL2GL3.GL_LINE;
-import static cg.lab2.opengl.Primitives.GL_TRIANGLE_STRIP;
 
 final class TriangleStrip extends Primitive {
 
