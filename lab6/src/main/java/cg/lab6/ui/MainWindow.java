@@ -10,11 +10,11 @@ public class MainWindow extends JFrame {
     public MainWindow() {
         this.panel = new Panel();
 
-        setBounds(new Rectangle(650, 650));
-        setSize(new Dimension(640, 660));
-        setMaximumSize(new Dimension(670, 670));
+        setBounds(new Rectangle(670, 670));
+        setSize(new Dimension(625, 660));
+        setMaximumSize(new Dimension(660, 660));
         setResizable(false);
-        setTitle("GLSL shader");
+        setTitle("3D object");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();

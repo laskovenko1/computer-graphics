@@ -4,13 +4,9 @@ import cg.lab6.opengl.Bolt;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
-import com.jogamp.opengl.util.FPSAnimator;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Optional;
-import java.util.function.Consumer;
 
 import static com.jogamp.opengl.GLProfile.GL2;
 import static com.jogamp.opengl.GLProfile.get;
@@ -30,13 +26,14 @@ class Panel extends GLJPanel {
         setBounds(new Rectangle(610, 610));
         setMinimumSize(new Dimension(600, 600));
         setMaximumSize(new Dimension(600, 600));
+
+        bolt = new Bolt();
+        this.addGLEventListener(bolt);
+
         addMouseListener(new MouseButtonHandler());
         addMouseMotionListener(new MouseMotionHandler());
         addMouseWheelListener(new MouseWheelHandler());
-        addKeyListener(new KeyHandler());
-        bolt = new Bolt();
-        this.addGLEventListener(bolt);
-        repaint();
+        addKeyListener(new KeyboardButtonHandler());
     }
 
     private class MouseButtonHandler implements MouseListener {
@@ -53,7 +50,7 @@ class Panel extends GLJPanel {
         }
 
         @Override
-        public void mouseReleased(MouseEvent e){
+        public void mouseReleased(MouseEvent e) {
         }
 
         @Override
@@ -74,8 +71,8 @@ class Panel extends GLJPanel {
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            xAxisRotation += (180 * ((float)e.getX() - (float)posY)) / (getHeight());
-            yAxisRotation += (180 * ((float)e.getY() - (float)posX)) / (getWidth());
+            xAxisRotation += (180 * ((float) e.getY() - (float) posY)) / (getHeight());
+            yAxisRotation += (180 * ((float) e.getX() - (float) posX)) / (getWidth());
 
             posX = e.getX();
             posY = e.getY();
@@ -89,17 +86,17 @@ class Panel extends GLJPanel {
         }
     }
 
-    private class MouseWheelHandler  implements MouseWheelListener {
+    private class MouseWheelHandler implements MouseWheelListener {
 
         @Override
         public void mouseWheelMoved(MouseWheelEvent e) {
-            float scale = (float)-e.getWheelRotation()/10;
+            float scale = (float) -e.getWheelRotation() / 10;
             bolt.setUpScale(scale);
             repaint();
         }
     }
 
-    private class KeyHandler implements  KeyListener {
+    private class KeyboardButtonHandler implements KeyListener {
 
         @Override
         public void keyTyped(KeyEvent keyEvent) {
@@ -108,19 +105,19 @@ class Panel extends GLJPanel {
 
         @Override
         public void keyPressed(KeyEvent keyEvent) {
-            if(keyEvent.getKeyCode() == KeyEvent.VK_UP) {
+            if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
                 bolt.setUpBreaking(1.0f);
             }
-            if(keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
+            if (keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
                 bolt.setUpBreaking(-1.0f);
             }
-            if(keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
                 bolt.setUpAxis();
             }
-            if(keyEvent.getKeyCode() == KeyEvent.VK_LEFT) {
+            if (keyEvent.getKeyCode() == KeyEvent.VK_LEFT) {
                 bolt.setUpLight(-0.05f);
             }
-            if(keyEvent.getKeyCode() == KeyEvent.VK_RIGHT) {
+            if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT) {
                 bolt.setUpLight(+0.05f);
             }
             repaint();
