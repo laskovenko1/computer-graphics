@@ -1,6 +1,6 @@
-package cg.lab6.ui;
+package cg.lab5.ui;
 
-import cg.lab6.opengl.Shader;
+import cg.lab5.opengl.Shader;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
