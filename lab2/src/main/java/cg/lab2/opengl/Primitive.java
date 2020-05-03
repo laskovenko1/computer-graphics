@@ -1,11 +1,11 @@
 package cg.lab2.opengl;
 
+import cg.lab1.models.Color4f;
+import cg.lab1.models.Pair;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
-import com.sun.scenario.effect.Color4f;
-import javafx.util.Pair;
 
 import java.awt.geom.Point2D;
 import java.util.List;
@@ -26,7 +26,7 @@ public abstract class Primitive implements GLEventListener {
     }
 
     public String getName() {
-         return type.toString();
+        return type.toString();
     }
 
     public List<Pair<Point2D.Float, Color4f>> getPoints() {

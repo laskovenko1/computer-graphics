@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>lab4</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <developers>
         <developer>
             <name>Evgenii Laskovenko</name>

@@ -1,13 +1,13 @@
 package cg.lab2.ui;
 
+import cg.lab1.models.Color4f;
+import cg.lab1.models.Pair;
+import cg.lab2.opengl.Primitive;
+import cg.lab2.opengl.PrimitiveFactory;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
-import com.sun.scenario.effect.Color4f;
-import javafx.util.Pair;
-import cg.lab2.opengl.Primitive;
-import cg.lab2.opengl.PrimitiveFactory;
 
 import javax.swing.*;
 import java.awt.*;

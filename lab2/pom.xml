@@ -24,6 +24,12 @@
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-main</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.cg</groupId>
+            <artifactId>lab1</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
