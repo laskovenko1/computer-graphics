@@ -118,7 +118,10 @@ class Panel extends GLJPanel {
                 bolt.setUpAttenuation(+0.2f);
             }
             if (keyEvent.getKeyCode() == KeyEvent.VK_A) {
-                bolt.setUpAxis();
+                bolt.setAxisMode();
+            }
+            if (keyEvent.getKeyCode() == KeyEvent.VK_T) {
+                bolt.setTransparentMode();
             }
             repaint();
         }

@@ -11,7 +11,6 @@ import java.util.List;
 
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2GL3.GL_FILL;
-import static com.jogamp.opengl.GL2GL3.GL_LINE;
 import static com.jogamp.opengl.fixedfunc.GLLightingFunc.*;
 import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW;
 import static java.lang.Math.cos;
@@ -20,8 +19,9 @@ import static java.lang.Math.sin;
 public class Bolt implements GLEventListener {
 
     private float attenuation = 0.5f;
-    private boolean showAxis = true;
     private boolean perspectiveProjection = false;
+    private boolean axisMode = false;
+    private boolean transparentMode = false;
     private float vertexCount = 8;
     private float yAxisRotation = -327.0f;
     private float xAxisRotation = 327.0f;
@@ -50,7 +50,6 @@ public class Bolt implements GLEventListener {
 
 //        final GLU glu = GLU.createGLU(gl);
 //        glu.gluLookAt(0f,0f,1f, 0,0,0, 0,1,0);
-        setLight(gl);
 //        if(perspectiveProjection) {
 //            //перспективная
 //            gl.glMatrixMode(GL_PROJECTION);
@@ -63,30 +62,28 @@ public class Bolt implements GLEventListener {
         gl.glMatrixMode(GL_MODELVIEW);
         gl.glLoadIdentity();
 
-
         gl.glRotatef(yAxisRotation, 0.0f, 1.0f, 0.0f);
         gl.glRotatef(xAxisRotation, 1.0f, 0.0f, 0.0f);
         gl.glScaled(scale, scale, scale);
 
-        gl.glLineWidth(0.5f);
-        gl.glPolygonMode(GL_FRONT, GL_FILL);
-        gl.glPolygonMode(GL_BACK, GL_LINE);
-
-        if (showAxis) {
+        gl.glDisable(GL_LIGHTING);
+        if (axisMode) {
+            gl.glLineWidth(0.5f);
             gl.glBegin(GL_LINES);
-            gl.glColor4f(0.0f, 0.5f, 0.5f, 0.3f);
-            gl.glVertex3f(-10.0f, 0.0f, 0.0f);
-            gl.glVertex3f(10.0f, 0.0f, 0.0f);
-            gl.glColor4f(0.5f, 0.0f, 0.5f, 0.3f);
-            gl.glVertex3f(0.0f, -10.0f, 0.0f);
-            gl.glVertex3f(0.0f, 10.0f, 0.0f);
-            gl.glColor4f(0.5f, 0.5f, 0.0f, 0.3f);
-            gl.glVertex3f(0.0f, 0.0f, -10.0f);
-            gl.glVertex3f(0.0f, 0.0f, 10.0f);
+            gl.glColor4f(1.0f, .0f, .0f, 0.8f);
+            gl.glVertex3f(-1.0f, 0.0f, 0.0f);
+            gl.glVertex3f(1.0f, 0.0f, 0.0f);
+            gl.glColor4f(.0f, 1.0f, .0f, 0.8f);
+            gl.glVertex3f(0.0f, -1.0f, 0.0f);
+            gl.glVertex3f(0.0f, 1.0f, 0.0f);
+            gl.glColor4f(.0f, .0f, 1.0f, 0.8f);
+            gl.glVertex3f(0.0f, 0.0f, -1.0f);
+            gl.glVertex3f(0.0f, 0.0f, 1.0f);
             gl.glEnd();
         }
 
-        gl.glColor4f(0.0f, 1.0f, 1.0f, 0.8f);
+        setLight(gl);
+        gl.glPolygonMode(GL_FRONT, GL_FILL);
         //шапочка
         gl.glBegin(GL2.GL_POLYGON);
         for (int i = (int) vertexCount - 1; i >= 0; --i) {
@@ -143,9 +140,6 @@ public class Bolt implements GLEventListener {
         gl.glVertex3f(threadBack.get(0)[0], threadBack.get(0)[1], threadBack.get(0)[2]);
         gl.glVertex3f(threadFront.get(0)[0], threadFront.get(0)[1], threadFront.get(0)[2]);
         gl.glEnd();
-
-        gl.glDisable(GL_DEPTH_TEST);
-        gl.glDisable(GL_BLEND);
     }
 
     @Override
@@ -180,8 +174,12 @@ public class Bolt implements GLEventListener {
         }
     }
 
-    public void setUpAxis() {
-        this.showAxis = !showAxis;
+    public void setAxisMode() {
+        this.axisMode = !axisMode;
+    }
+
+    public void setTransparentMode() {
+        this.transparentMode = !transparentMode;
     }
 
     private void generateVertexes() {
@@ -221,7 +219,7 @@ public class Bolt implements GLEventListener {
         float[] position = {.3f, 1.0f, 1.0f, 1.0f};
 
         float[] materialFrontShininess = {10.0f};
-        float[] materialFrontDiffuse = {.333333333f, 0.411764706f, 0.478431373f, 1.0f};
+        float[] materialFrontDiffuse = {.333333333f, 0.411764706f, .478431373f, transparentMode ? .5f : 1.0f};
 
         gl.glEnable(GL_LIGHTING);
         gl.glEnable(GL_LIGHT0);
@@ -235,8 +233,8 @@ public class Bolt implements GLEventListener {
         gl.glLightfv(GL_LIGHT0, GL_POSITION, FloatBuffer.wrap(position));
 
         gl.glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, attenuation);
-        gl.glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.1f);
-        gl.glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.4f);
+        gl.glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.2f);
+        gl.glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.1f);
 
         gl.glMaterialfv(GL_FRONT, GL_SHININESS, FloatBuffer.wrap(materialFrontShininess));
         gl.glMaterialfv(GL_FRONT, GL_DIFFUSE, FloatBuffer.wrap(materialFrontDiffuse));
