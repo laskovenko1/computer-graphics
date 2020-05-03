@@ -1,21 +1,17 @@
 package cg.lab6.opengl;
 
-import com.jogamp.opengl.*;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.util.GLArrayDataServer;
-import com.jogamp.opengl.util.glsl.ShaderCode;
-import com.jogamp.opengl.util.glsl.ShaderProgram;
-import com.jogamp.opengl.util.glsl.ShaderState;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.jogamp.opengl.GL.*;
-import static com.jogamp.opengl.GL2ES1.GL_LIGHT_MODEL_AMBIENT;
-import static com.jogamp.opengl.GL2ES1.GL_LIGHT_MODEL_TWO_SIDE;
 import static com.jogamp.opengl.GL2GL3.GL_FILL;
-import static com.jogamp.opengl.GL2GL3.GL_LINE;
 import static com.jogamp.opengl.fixedfunc.GLLightingFunc.*;
 import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW;
 import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
@@ -25,7 +21,7 @@ import static java.lang.Math.sin;
 public class Bolt implements GLEventListener {
     private float lightIntensity = 0.5f;
     private boolean axis = true;
-    private int projection = 0;
+    private boolean perspectiveProjection = false;
     private float vertexCount = 8;
     private float yAxisRotation = -327.0f;
     private float xAxisRotation = 327.0f;
@@ -51,19 +47,23 @@ public class Bolt implements GLEventListener {
     public void display(GLAutoDrawable glAutoDrawable) {
         final GL2 gl = glAutoDrawable.getGL().getGL2();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+        gl.glViewport(0, 0, 600, 600);
 
+//        final GLU glu = GLU.createGLU(gl);
+//        glu.gluLookAt(0f,0f,1f, 0,0,0, 0,1,0);
         setLight(gl);
-//        if(projection == 0) {
-//            gl.glMatrixMode(GL_MODELVIEW);
-//            gl.glLoadIdentity();
-//        } else if(projection == 1) {
-//            gl.glViewport(1, 1, 500, 500);
+//        if(perspectiveProjection) {
+//            //перспективная
 //            gl.glMatrixMode(GL_PROJECTION);
-//            gl.glLoadIdentity();
+//            gl.glFrustum(-1.0f,1.0f,0f,0f,0.0f,1.0f);
+//        } else {
+//            // ортогональная
+//            gl.glMatrixMode(GL_PROJECTION);
+//            gl.glOrtho(-1.0f,1.0f,0f,0f,0.0f,1.0f);
 //        }
-
         gl.glMatrixMode(GL_MODELVIEW);
         gl.glLoadIdentity();
+
 
         gl.glRotatef(yAxisRotation, 0.0f, 1.0f, 0.0f);
         gl.glRotatef(xAxisRotation, 1.0f, 0.0f, 0.0f);
@@ -86,7 +86,7 @@ public class Bolt implements GLEventListener {
             gl.glEnd();
         }
 
-        gl.glColor4f(0.0f, 1.0f, 1.0f, 0.5f);
+        gl.glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
         //шапочка
         gl.glBegin(GL2.GL_POLYGON);
         hatFront.forEach((vertex) -> gl.glVertex3f(vertex[0], vertex[1], vertex[2]));
@@ -162,6 +162,13 @@ public class Bolt implements GLEventListener {
 
     public void setUpScale(float scale) {
         this.scale += scale;
+        System.out.println(this.scale);
+        if(this.scale < 0.1) {
+            this.scale = 0.1f;
+        }
+        if(this.scale > 1.4) {
+            this.scale = 1.4f;
+        }
     }
 
     public void setUpAxis() {
@@ -197,8 +204,7 @@ public class Bolt implements GLEventListener {
     }
 
     public void setUpProjection() {
-        this.projection +=1;
-        this.projection = this.projection % 3;
+        this.perspectiveProjection = !this.perspectiveProjection;
     }
 
     private void setLight(GL2 gl) {
