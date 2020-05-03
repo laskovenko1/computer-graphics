@@ -1,5 +1,6 @@
 package cg.lab1.ui;
 
+import cg.lab1.opengl.Primitive;
 import cg.lab1.opengl.PrimitiveFactory;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLEventListener;
@@ -7,7 +8,6 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.sun.scenario.effect.Color4f;
 import javafx.util.Pair;
-import cg.lab1.opengl.Primitive;
 
 import javax.swing.*;
 import java.awt.*;
