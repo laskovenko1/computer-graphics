@@ -111,14 +111,14 @@ class Panel extends GLJPanel {
             if (keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
                 bolt.setUpBreaking(-1.0f);
             }
-            if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-                bolt.setUpAxis();
-            }
             if (keyEvent.getKeyCode() == KeyEvent.VK_LEFT) {
-                bolt.setUpLight(-0.05f);
+                bolt.setUpAttenuation(-0.2f);
             }
             if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT) {
-                bolt.setUpLight(+0.05f);
+                bolt.setUpAttenuation(+0.2f);
+            }
+            if (keyEvent.getKeyCode() == KeyEvent.VK_A) {
+                bolt.setUpAxis();
             }
             repaint();
         }

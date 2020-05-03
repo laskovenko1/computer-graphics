@@ -4,7 +4,6 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
-import com.jogamp.opengl.glu.GLU;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -12,15 +11,16 @@ import java.util.List;
 
 import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2GL3.GL_FILL;
+import static com.jogamp.opengl.GL2GL3.GL_LINE;
 import static com.jogamp.opengl.fixedfunc.GLLightingFunc.*;
 import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW;
-import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
 public class Bolt implements GLEventListener {
-    private float lightIntensity = 0.5f;
-    private boolean axis = true;
+
+    private float attenuation = 0.5f;
+    private boolean showAxis = true;
     private boolean perspectiveProjection = false;
     private float vertexCount = 8;
     private float yAxisRotation = -327.0f;
@@ -37,7 +37,6 @@ public class Bolt implements GLEventListener {
     public void init(GLAutoDrawable glAutoDrawable) {
         generateVertexes();
     }
-
 
     @Override
     public void dispose(GLAutoDrawable glAutoDrawable) {
@@ -71,68 +70,78 @@ public class Bolt implements GLEventListener {
 
         gl.glLineWidth(0.5f);
         gl.glPolygonMode(GL_FRONT, GL_FILL);
+        gl.glPolygonMode(GL_BACK, GL_LINE);
 
-        if(axis) {
+        if (showAxis) {
             gl.glBegin(GL_LINES);
             gl.glColor4f(0.0f, 0.5f, 0.5f, 0.3f);
             gl.glVertex3f(-10.0f, 0.0f, 0.0f);
             gl.glVertex3f(10.0f, 0.0f, 0.0f);
             gl.glColor4f(0.5f, 0.0f, 0.5f, 0.3f);
             gl.glVertex3f(0.0f, -10.0f, 0.0f);
-            gl.glVertex3f(0.0f,10.0f, 0.0f);
+            gl.glVertex3f(0.0f, 10.0f, 0.0f);
             gl.glColor4f(0.5f, 0.5f, 0.0f, 0.3f);
             gl.glVertex3f(0.0f, 0.0f, -10.0f);
-            gl.glVertex3f(0.0f,0.0f, 10.0f);
+            gl.glVertex3f(0.0f, 0.0f, 10.0f);
             gl.glEnd();
         }
 
-        gl.glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
+        gl.glColor4f(0.0f, 1.0f, 1.0f, 0.8f);
         //шапочка
         gl.glBegin(GL2.GL_POLYGON);
-        hatFront.forEach((vertex) -> gl.glVertex3f(vertex[0], vertex[1], vertex[2]));
-        gl.glEnd();
-        gl.glBegin(GL2.GL_POLYGON);
-        hatBack.forEach((vertex) -> gl.glVertex3f(vertex[0], vertex[1], vertex[2]));
-        gl.glEnd();
-
-        //ножка
-        gl.glBegin(GL2.GL_POLYGON);
-        legFront.forEach((vertex) -> gl.glVertex3f(vertex[0], vertex[1], vertex[2]));
-        gl.glEnd();
-        gl.glBegin(GL2.GL_POLYGON);
-        legBack.forEach((vertex) -> gl.glVertex3f(vertex[0], vertex[1], vertex[2]));
-        gl.glEnd();
-
-        //резьба
-        gl.glBegin(GL2.GL_POLYGON);
-        threadFront.forEach((vertex) -> gl.glVertex3f(vertex[0], vertex[1], vertex[2]));
-        gl.glEnd();
-        gl.glBegin(GL2.GL_POLYGON);
-        threadBack.forEach((vertex) -> gl.glVertex3f(vertex[0], vertex[1], vertex[2]));
-        gl.glEnd();
-
-        // шапочка соединительные линии
-        gl.glBegin(GL2.GL_QUAD_STRIP);
-        for(int i = 0; i < vertexCount; i++){
-            gl.glVertex3f(hatBack.get(i)[0], hatBack.get(i)[1], hatBack.get(i)[2]);
+        for (int i = (int) vertexCount - 1; i >= 0; --i) {
             gl.glVertex3f(hatFront.get(i)[0], hatFront.get(i)[1], hatFront.get(i)[2]);
         }
         gl.glEnd();
 
+        gl.glBegin(GL2.GL_POLYGON);
+        for (int i = 0; i < (int) vertexCount; ++i) {
+            gl.glVertex3f(hatBack.get(i)[0], hatBack.get(i)[1], hatBack.get(i)[2]);
+        }
+        gl.glEnd();
+
+        //ножка
+        gl.glBegin(GL2.GL_POLYGON);
+        for (int i = 0; i < (int) vertexCount; ++i) {
+            gl.glVertex3f(legBack.get(i)[0], legBack.get(i)[1], legBack.get(i)[2]);
+        }
+        gl.glEnd();
+
+        //резьба
+        gl.glBegin(GL2.GL_POLYGON);
+        for (int i = 0; i < (int) vertexCount; ++i) {
+            gl.glVertex3f(threadBack.get(i)[0], threadBack.get(i)[1], threadBack.get(i)[2]);
+        }
+        gl.glEnd();
+
+        // шапочка соединительные линии
+        gl.glBegin(GL2.GL_QUAD_STRIP);
+        for (int i = 0; i < (int) vertexCount; ++i) {
+            gl.glVertex3f(hatBack.get(i)[0], hatBack.get(i)[1], hatBack.get(i)[2]);
+            gl.glVertex3f(hatFront.get(i)[0], hatFront.get(i)[1], hatFront.get(i)[2]);
+        }
+        gl.glVertex3f(hatBack.get(0)[0], hatBack.get(0)[1], hatBack.get(0)[2]);
+        gl.glVertex3f(hatFront.get(0)[0], hatFront.get(0)[1], hatFront.get(0)[2]);
+        gl.glEnd();
+
         //ножка соединительные линии
         gl.glBegin(GL2.GL_QUAD_STRIP);
-        for(int i = 0; i < vertexCount; i++){
+        for (int i = 0; i < (int) vertexCount; ++i) {
             gl.glVertex3f(legBack.get(i)[0], legBack.get(i)[1], legBack.get(i)[2]);
             gl.glVertex3f(legFront.get(i)[0], legFront.get(i)[1], legFront.get(i)[2]);
         }
+        gl.glVertex3f(legBack.get(0)[0], legBack.get(0)[1], legBack.get(0)[2]);
+        gl.glVertex3f(legFront.get(0)[0], legFront.get(0)[1], legFront.get(0)[2]);
         gl.glEnd();
 
         //резьба соединительные линии
         gl.glBegin(GL2.GL_QUAD_STRIP);
-        for(int i = 0; i < vertexCount; i++){
+        for (int i = 0; i < (int) vertexCount; ++i) {
             gl.glVertex3f(threadBack.get(i)[0], threadBack.get(i)[1], threadBack.get(i)[2]);
             gl.glVertex3f(threadFront.get(i)[0], threadFront.get(i)[1], threadFront.get(i)[2]);
         }
+        gl.glVertex3f(threadBack.get(0)[0], threadBack.get(0)[1], threadBack.get(0)[2]);
+        gl.glVertex3f(threadFront.get(0)[0], threadFront.get(0)[1], threadFront.get(0)[2]);
         gl.glEnd();
 
         gl.glDisable(GL_DEPTH_TEST);
@@ -151,10 +160,10 @@ public class Bolt implements GLEventListener {
 
     public void setUpBreaking(float vertexCount) {
         this.vertexCount += vertexCount;
-        if(this.vertexCount < 2) {
+        if (this.vertexCount < 2) {
             this.vertexCount = 2.0f;
         }
-        if(this.vertexCount > 20) {
+        if (this.vertexCount > 20) {
             this.vertexCount = 20.0f;
         }
         generateVertexes();
@@ -163,19 +172,19 @@ public class Bolt implements GLEventListener {
     public void setUpScale(float scale) {
         this.scale += scale;
         System.out.println(this.scale);
-        if(this.scale < 0.1) {
+        if (this.scale < 0.1) {
             this.scale = 0.1f;
         }
-        if(this.scale > 1.4) {
+        if (this.scale > 1.4) {
             this.scale = 1.4f;
         }
     }
 
     public void setUpAxis() {
-        this.axis = !axis;
+        this.showAxis = !showAxis;
     }
 
-    private void generateVertexes (){
+    private void generateVertexes() {
         generatePolygon(0.5f, 0.5f, hatFront);
         generatePolygon(0.5f, 0.3f, hatBack);
         //generate Leg
@@ -187,19 +196,19 @@ public class Bolt implements GLEventListener {
     }
 
     private void generatePolygon(float radius, float z, List<float[]> vertexList) {
-       vertexList.clear();
+        vertexList.clear();
         for (int i = 0; i < vertexCount; i++) {
             float a = (float) i / vertexCount * 3.1415f * 2.0f;
             vertexList.add(new float[]{(float) cos(a) * radius, (float) sin(a) * radius, z});
         }
     }
 
-    public void setUpLight(float lightIntensity) {
-        this.lightIntensity += lightIntensity;
-        if (this.lightIntensity < 0.0f) {
-            this.lightIntensity = 0.0f;
-        } else if (this.lightIntensity > 1.0f) {
-            this.lightIntensity = 1.0f;
+    public void setUpAttenuation(float attenuation) {
+        this.attenuation += attenuation;
+        if (this.attenuation < 0.0f) {
+            this.attenuation = 0.0f;
+        } else if (this.attenuation > 10.0f) {
+            this.attenuation = 10.0f;
         }
     }
 
@@ -208,25 +217,28 @@ public class Bolt implements GLEventListener {
     }
 
     private void setLight(GL2 gl) {
-        // Устанавливаем параметры источника света
-        float[] ambient = {lightIntensity, lightIntensity, lightIntensity, 1.0f};
-        float[] diffuse = {lightIntensity,lightIntensity, lightIntensity, 1.0f};
-        float[] position = {-100.0f, -60.0f, -150.0f, 0.0f};
-        // Определяем цвет фона используемый по умолчанию
-        gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        // Включаем различные тесты
+        float[] diffuse = {1.0f, .949019608f, .929411765f};
+        float[] position = {.3f, 1.0f, 1.0f, 1.0f};
+
+        float[] materialFrontShininess = {10.0f};
+        float[] materialFrontDiffuse = {.333333333f, 0.411764706f, 0.478431373f, 1.0f};
+
+        gl.glEnable(GL_LIGHTING);
+        gl.glEnable(GL_LIGHT0);
+
         gl.glDepthFunc(GL_LEQUAL);
         gl.glEnable(GL_DEPTH_TEST);
         gl.glEnable(GL_BLEND);
-        gl.glBlendFunc(GL_ONE, GL_SRC_COLOR);
-        // Задаем источник света
-        gl.glLightfv(GL_LIGHT0, GL_AMBIENT, FloatBuffer.wrap(ambient));
-        gl.glLightfv(GL_LIGHT0, GL_DIFFUSE, FloatBuffer.wrap(diffuse));
-        gl.glLightfv(GL_LIGHT1, GL_POSITION, FloatBuffer.wrap(position));
+        gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        // Разрешаем освещение и включаем источник света
-        gl.glEnable(GL_LIGHTING);
-        gl.glEnable(GL_LIGHT0);
-        gl.glEnable(GL_LIGHT1);
+        gl.glLightfv(GL_LIGHT0, GL_DIFFUSE, FloatBuffer.wrap(diffuse));
+        gl.glLightfv(GL_LIGHT0, GL_POSITION, FloatBuffer.wrap(position));
+
+        gl.glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, attenuation);
+        gl.glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.1f);
+        gl.glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.4f);
+
+        gl.glMaterialfv(GL_FRONT, GL_SHININESS, FloatBuffer.wrap(materialFrontShininess));
+        gl.glMaterialfv(GL_FRONT, GL_DIFFUSE, FloatBuffer.wrap(materialFrontDiffuse));
     }
 }
