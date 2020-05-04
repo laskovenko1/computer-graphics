@@ -4,6 +4,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.glu.GLU;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -13,12 +14,14 @@ import static com.jogamp.opengl.GL.*;
 import static com.jogamp.opengl.GL2GL3.GL_FILL;
 import static com.jogamp.opengl.fixedfunc.GLLightingFunc.*;
 import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW;
+import static com.jogamp.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
 public class Bolt implements GLEventListener {
 
     private float attenuation = 0.5f;
+    private boolean showAxis = true;
     private boolean perspectiveProjection = false;
     private boolean axisMode = false;
     private boolean transparentMode = false;
@@ -48,22 +51,28 @@ public class Bolt implements GLEventListener {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
         gl.glViewport(0, 0, 600, 600);
 
-//        final GLU glu = GLU.createGLU(gl);
-//        glu.gluLookAt(0f,0f,1f, 0,0,0, 0,1,0);
-//        if(perspectiveProjection) {
-//            //перспективная
-//            gl.glMatrixMode(GL_PROJECTION);
-//            gl.glFrustum(-1.0f,1.0f,0f,0f,0.0f,1.0f);
-//        } else {
-//            // ортогональная
-//            gl.glMatrixMode(GL_PROJECTION);
-//            gl.glOrtho(-1.0f,1.0f,0f,0f,0.0f,1.0f);
-//        }
+        final GLU glu = GLU.createGLU(gl);
+        setLight(gl);
+        if(perspectiveProjection) {
+            //перспективная
+            gl.glMatrixMode(GL_PROJECTION);
+            gl.glLoadIdentity();
+            glu.gluPerspective(45f,0.75f,0.7f,100.0f);
+
+        } else {
+            //ортогональная
+            gl.glMatrixMode(GL_PROJECTION);
+            gl.glLoadIdentity();
+            gl.glOrtho(-1f, 1f, -1f, 1f, 0.7f, 100f);
+        }
         gl.glMatrixMode(GL_MODELVIEW);
         gl.glLoadIdentity();
+        glu.gluLookAt(1 * Math.sin(xAxisRotation) * Math.cos(yAxisRotation),
+                1 * Math.sin(yAxisRotation),
+                1 * Math.cos(xAxisRotation) * Math.cos(yAxisRotation),
+                0, 0, 0,
+                0, 1, 0);
 
-        gl.glRotatef(yAxisRotation, 0.0f, 1.0f, 0.0f);
-        gl.glRotatef(xAxisRotation, 1.0f, 0.0f, 0.0f);
         gl.glScaled(scale, scale, scale);
 
         gl.glDisable(GL_LIGHTING);
@@ -166,11 +175,14 @@ public class Bolt implements GLEventListener {
     public void setUpScale(float scale) {
         this.scale += scale;
         System.out.println(this.scale);
-        if (this.scale < 0.1) {
+        if(this.scale < 0.1) {
             this.scale = 0.1f;
         }
-        if (this.scale > 1.4) {
-            this.scale = 1.4f;
+        if(this.perspectiveProjection && this.scale > 0.4) {
+            this.scale = 0.4f;
+        }
+        if(!this.perspectiveProjection && this.scale > 1.0) {
+            this.scale = 1.0f;
         }
     }
 
