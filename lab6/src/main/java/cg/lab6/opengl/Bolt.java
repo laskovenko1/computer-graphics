@@ -21,14 +21,13 @@ import static java.lang.Math.sin;
 public class Bolt implements GLEventListener {
 
     private float attenuation = 0.5f;
-    private boolean showAxis = true;
     private boolean perspectiveProjection = false;
     private boolean axisMode = false;
     private boolean transparentMode = false;
     private float vertexCount = 8;
-    private float yAxisRotation = -327.0f;
-    private float xAxisRotation = 327.0f;
-    private float scale = 1.0f;
+    private float yAxisRotation = 4.2f;
+    private float xAxisRotation = -23.0f;
+    private float scale = 0.5f;
     private List<float[]> hatFront = new ArrayList<>();
     private List<float[]> hatBack = new ArrayList<>();
     private List<float[]> legFront = new ArrayList<>();
@@ -157,6 +156,7 @@ public class Bolt implements GLEventListener {
     }
 
     public void setUpRotations(float xAxisRotation, float yAxisRotation) {
+        System.out.println(xAxisRotation + " "+ yAxisRotation);
         this.xAxisRotation = xAxisRotation;
         this.yAxisRotation = yAxisRotation;
     }
@@ -178,8 +178,8 @@ public class Bolt implements GLEventListener {
         if(this.scale < 0.1) {
             this.scale = 0.1f;
         }
-        if(this.perspectiveProjection && this.scale > 0.4) {
-            this.scale = 0.4f;
+        if(this.perspectiveProjection && this.scale > 0.3) {
+            this.scale = 0.3f;
         }
         if(!this.perspectiveProjection && this.scale > 1.0) {
             this.scale = 1.0f;
@@ -224,6 +224,7 @@ public class Bolt implements GLEventListener {
 
     public void setUpProjection() {
         this.perspectiveProjection = !this.perspectiveProjection;
+        setUpScale(0.1f);
     }
 
     private void setLight(GL2 gl) {
