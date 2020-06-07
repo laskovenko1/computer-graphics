@@ -48,6 +48,16 @@ class Panel extends GLJPanel {
                 scene.rotateRight();
             }
 
+            if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
+                scene.increaseScale();
+            }
+            if (keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
+                scene.decreaseScale();
+            }
+
+            if (keyEvent.getKeyCode() == KeyEvent.VK_D) {
+                scene.changeColor();
+            }
             repaint();
         }
 
