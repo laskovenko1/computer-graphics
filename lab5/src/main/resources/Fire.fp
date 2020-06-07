@@ -64,5 +64,6 @@ void main() {
     float finalNoise = n * gradient;
 
     vec3 color = finalNoise * vec3(2.0*n, 2.0*n*n*n, n*n*n*n);
-    gl_FragColor = vec4(color, 1.0);
+//    gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f);
 }

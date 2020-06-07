@@ -23,9 +23,9 @@ class Panel extends GLJPanel {
         GLProfile profile = get(GL2);
         GLCapabilities capabilities = new GLCapabilities(profile);
         setRequestedGLCapabilities(capabilities);
-        setBounds(new Rectangle(610, 610));
-        setMinimumSize(new Dimension(600, 600));
-        setMaximumSize(new Dimension(600, 600));
+        setBounds(new Rectangle(585, 620));
+        setMinimumSize(new Dimension(585, 600));
+        setMaximumSize(new Dimension(585, 600));
 
         bolt = new Bolt();
         this.addGLEventListener(bolt);
@@ -40,11 +40,6 @@ class Panel extends GLJPanel {
 
         @Override
         public void mousePressed(MouseEvent e) {
-            if (e.getButton() == 3) {
-                bolt.setUpProjection();
-                repaint();
-                return;
-            }
             posX = e.getX();
             posY = e.getY();
         }
@@ -105,6 +100,24 @@ class Panel extends GLJPanel {
 
         @Override
         public void keyPressed(KeyEvent keyEvent) {
+            if (keyEvent.getKeyCode() == KeyEvent.VK_X && !keyEvent.isControlDown()) {
+                bolt.setUpStretching(0.1f, 0.0f, 0.0f);
+            }
+            if (keyEvent.getKeyCode() == KeyEvent.VK_X && keyEvent.isControlDown()) {
+                bolt.setUpStretching(-0.1f, 0.0f, 0.0f);
+            }
+            if (keyEvent.getKeyCode() == KeyEvent.VK_Y && !keyEvent.isControlDown()) {
+                bolt.setUpStretching(0.0f, 0.1f, 0.0f);
+            }
+            if (keyEvent.getKeyCode() == KeyEvent.VK_Y && keyEvent.isControlDown()) {
+                bolt.setUpStretching(0.0f, -0.1f, 0.0f);
+            }
+            if (keyEvent.getKeyCode() == KeyEvent.VK_Z && !keyEvent.isControlDown()) {
+                bolt.setUpStretching(0.0f, 0.0f, 0.1f);
+            }
+            if (keyEvent.getKeyCode() == KeyEvent.VK_Z && keyEvent.isControlDown()) {
+                bolt.setUpStretching(0.0f, 0.0f, -0.1f);
+            }
             if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
                 bolt.setUpBreaking(1.0f);
             }
@@ -122,6 +135,9 @@ class Panel extends GLJPanel {
             }
             if (keyEvent.getKeyCode() == KeyEvent.VK_T) {
                 bolt.setTransparentMode();
+            }
+            if (keyEvent.getKeyCode() == KeyEvent.VK_P) {
+                bolt.setUpProjection();
             }
             repaint();
         }

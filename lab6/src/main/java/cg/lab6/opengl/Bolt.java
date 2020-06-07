@@ -19,7 +19,6 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
 public class Bolt implements GLEventListener {
-
     private float attenuation = 0.5f;
     private boolean perspectiveProjection = false;
     private boolean axisMode = false;
@@ -27,6 +26,9 @@ public class Bolt implements GLEventListener {
     private float vertexCount = 8;
     private float yAxisRotation = 4.2f;
     private float xAxisRotation = -23.0f;
+    private float xStretching = 0.0f;
+    private float yStretching = 0.0f;
+    private float zStretching = 0.0f;
     private float scale = 0.5f;
     private List<float[]> hatFront = new ArrayList<>();
     private List<float[]> hatBack = new ArrayList<>();
@@ -163,11 +165,8 @@ public class Bolt implements GLEventListener {
 
     public void setUpBreaking(float vertexCount) {
         this.vertexCount += vertexCount;
-        if (this.vertexCount < 2) {
-            this.vertexCount = 2.0f;
-        }
-        if (this.vertexCount > 20) {
-            this.vertexCount = 20.0f;
+        if (this.vertexCount < 2.0f || this.vertexCount > 20.0f) {
+            this.vertexCount -= vertexCount;
         }
         generateVertexes();
     }
@@ -194,15 +193,62 @@ public class Bolt implements GLEventListener {
         this.transparentMode = !transparentMode;
     }
 
+    public void setUpAttenuation(float attenuation) {
+        this.attenuation += attenuation;
+        if (this.attenuation < 0.0f || this.attenuation > 10.0f) {
+            this.attenuation -= attenuation;
+        }
+    }
+
+    public void setUpProjection() {
+        this.perspectiveProjection = !this.perspectiveProjection;
+        setUpScale(0.1f);
+    }
+
+    public void setUpStretching(float xStretching, float yStretching, float zStretching) {
+        this.xStretching += xStretching;
+        this.yStretching += yStretching;
+        this.zStretching += zStretching;
+        if(this.xStretching > 1.0f || this.xStretching < -0.1f ||
+                this.yStretching > 1.0f || this.yStretching < -0.1f ||
+                this.zStretching > 1.0f || this.zStretching < -0.0f) {
+            this.xStretching -= xStretching;
+            this.yStretching -= yStretching;
+            this.zStretching -= zStretching;
+        }
+        generateVertexes();
+    }
+
+    private void stretchVertexes(List<float[]> vertexList) {
+        for(int i = 0; i < (int)vertexCount/2; i++) {
+            vertexList.get(i)[0] += xStretching;
+            vertexList.get(i)[1] += yStretching;
+        }
+        for(int j = (int)vertexCount/2; j < vertexCount; j++) {
+            vertexList.get(j)[0] -= xStretching;
+            vertexList.get(j)[1] -= yStretching;
+        }
+    }
+
     private void generateVertexes() {
-        generatePolygon(0.5f, 0.5f, hatFront);
-        generatePolygon(0.5f, 0.3f, hatBack);
+        float hatFrontZ = 0.5f + this.zStretching;
+        float hatBackZ = 0.5f - 0.2f - zStretching;
+        float legBackZ = hatBackZ - 0.5f - zStretching;
+        float threadBackZ = legBackZ - 0.4f - zStretching;
+        generatePolygon(0.5f, hatFrontZ, hatFront);
+        stretchVertexes(hatFront);
+        generatePolygon(0.5f, hatBackZ, hatBack);
+        stretchVertexes(hatBack);
         //generate Leg
-        generatePolygon(0.22f, 0.3f, legFront);
-        generatePolygon(0.22f, -0.2f, legBack);
+        generatePolygon(0.22f, hatBackZ, legFront);
+        stretchVertexes(legFront);
+        generatePolygon(0.22f, legBackZ, legBack);
+        stretchVertexes(legBack);
         //generate thread
-        generatePolygon(0.18f, -0.2f, threadFront);
-        generatePolygon(0.18f, -0.8f, threadBack);
+        generatePolygon(0.18f, legBackZ, threadFront);
+        stretchVertexes(threadFront);
+        generatePolygon(0.18f, threadBackZ, threadBack);
+        stretchVertexes(threadBack);
     }
 
     private void generatePolygon(float radius, float z, List<float[]> vertexList) {
@@ -211,20 +257,6 @@ public class Bolt implements GLEventListener {
             float a = (float) i / vertexCount * 3.1415f * 2.0f;
             vertexList.add(new float[]{(float) cos(a) * radius, (float) sin(a) * radius, z});
         }
-    }
-
-    public void setUpAttenuation(float attenuation) {
-        this.attenuation += attenuation;
-        if (this.attenuation < 0.0f) {
-            this.attenuation = 0.0f;
-        } else if (this.attenuation > 10.0f) {
-            this.attenuation = 10.0f;
-        }
-    }
-
-    public void setUpProjection() {
-        this.perspectiveProjection = !this.perspectiveProjection;
-        setUpScale(0.1f);
     }
 
     private void setLight(GL2 gl) {
