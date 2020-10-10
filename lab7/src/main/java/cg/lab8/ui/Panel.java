@@ -39,6 +39,12 @@ class Panel extends GLJPanel {
 
         @Override
         public void keyPressed(KeyEvent keyEvent) {
+            if (keyEvent.getKeyCode() == KeyEvent.VK_LEFT) {
+                scene.rotateLeft();
+            }
+            if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT) {
+                scene.rotateRight();
+            }
             if (keyEvent.getKeyCode() == KeyEvent.VK_X && !keyEvent.isControlDown()) {
                 scene.moveLight(1f, 0f, 0f);
             }
@@ -68,9 +74,6 @@ class Panel extends GLJPanel {
             }
             if (keyEvent.getKeyCode() == KeyEvent.VK_D) {
                 scene.changeColor("diffuse");
-            }
-            if (keyEvent.getKeyCode() == KeyEvent.VK_T) {
-                scene.changeColor("teapot");
             }
             if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
                 scene.changeMirrorIntensity(-0.1f);
